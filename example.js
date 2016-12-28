@@ -2,9 +2,9 @@
 var SpeckleReceiver = require('./SpeckleReceiver')
 
 var myReceiver = new SpeckleReceiver( {
-  wsEndpoint: 'ws://10.211.55.2:8080',
-  restEndpoint: 'http://10.211.55.2:8080',
-  token: 'asdf', // optional for receivers
+  wsEndpoint: 'ws://10.211.55.2:8080', // replace with yours!
+  restEndpoint: 'http://10.211.55.2:8080', // replace with yours! 
+  token: 'asdf', // optional
   streamId: 'S1FWZ2TQl'
 } )
 

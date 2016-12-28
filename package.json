@@ -1,5 +1,5 @@
 {
-  "name": "simple-client",
+  "name": "speckle-receiver",
   "version": "0.0.1",
   "description": "A simple JS Client Receiver for Speckle Core Server (ie, the base of streams.speckle.xyz)",
   "main": "SpeckleReceiver.js",
@@ -14,7 +14,6 @@
   "license": "MIT",
   "dependencies": {
     "eventemitter2": "^2.2.1",
-    "node-uuid": "^1.4.7",
     "request": "^2.79.0",
     "ws": "^1.1.1"
   }
