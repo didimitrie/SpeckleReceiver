@@ -1,14 +1,14 @@
 {
   "name": "simple-client",
   "version": "0.0.1",
-  "description": "A simple JS Client Receiver for Speckle Core.",
+  "description": "A simple JS Client Receiver for Speckle Core Server (ie, the base of streams.speckle.xyz)",
   "main": "SpeckleReceiver.js",
   "scripts": {
     "start": "nodemon example.js"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/nodejitsu/browsenpm.org"
+    "url": "https://github.com/didimitrie/SpeckleReceiver"
   },
   "author": "Dimitrie A. Stefanescu",
   "license": "MIT",
