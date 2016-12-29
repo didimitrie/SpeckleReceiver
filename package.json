@@ -1,6 +1,6 @@
 {
   "name": "speckle-receiver",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A simple JS Client Receiver for Speckle Core Server (ie, the base of streams.speckle.xyz)",
   "main": "SpeckleReceiver.js",
   "scripts": {
