@@ -36,7 +36,7 @@ myReceiver.on('live-update', data => {
     // do something with the objects
     console.log('[live-update] Received all objects as well now.')
   })
-2
+  
   // you can also get just a single object, if so inclined:
   myReceiver.getObject( data.liveInstance.objects[0] )
   .then( obj => {
