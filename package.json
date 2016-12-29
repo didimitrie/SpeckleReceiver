@@ -13,8 +13,8 @@
   "author": "Dimitrie A. Stefanescu",
   "license": "MIT",
   "dependencies": {
+    "axios": "^0.15.3",
     "eventemitter2": "^2.2.1",
-    "request": "^2.79.0",
     "ws": "^1.1.1"
   }
 }

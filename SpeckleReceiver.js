@@ -1,7 +1,9 @@
 var WebSocket      = require('ws')
-var request        = require('request')
+var axios          = require('axios')
 var EventEmitter2  = require('eventemitter2').EventEmitter2
 var inherits       = require('./inherits')
+
+const nonHashedTypes       = [ '404', 'Number', 'Boolean', 'String', 'Point', 'Vector', 'Line']
 
 var SpeckleReceiver = function( options ) {
   var self = this
@@ -45,22 +47,18 @@ var SpeckleReceiver = function( options ) {
           break
         
         case 'live-update': 
-          console.log('Live update received.')
           self.emit('live-update', data.args)
           break
 
         case 'metadata-update':
-          console.log('metadata updated')
           self.emit('metadata-update', data.args)
           break
 
         case 'history-update':
-          console.log('history update')
           self.emit('history-update', data.args)
           break
 
         case 'volatile-message': 
-          console.log('volatile message')
           self.emit('volatile-message', data.args)
           break
       }
@@ -76,28 +74,36 @@ var SpeckleReceiver = function( options ) {
   }
   
   this.getStream = () => {
-    var requestOptions = {
-      url: self.restEndpoint + '/api/stream',
-      headers: {
-        'speckle-token': self.token,
-        'speckle-stream-id': self.streamId,
-        'speckle-ws-id': self.wsSessionId
-        }
-    }
-    request( requestOptions, (error, response, body) => {
-      if (!error && response.statusCode == 200) {
-        var data = JSON.parse(body)
-        self.emit('first-data', data)
-      }
+    axios.get( self.restEndpoint + '/api/stream', { headers : { 'speckle-token': self.token, 'speckle-stream-id': self.streamId, 'speckle-ws-id': self.wsSessionId }} )
+      .then( response => {  
+        self.emit('first-data', response.data)
+      })
+  }
+
+  this.getObjects = ( objects ) => {
+    var promises = objects.map( this.getObject )
+    return new Promise( (resolve, reject) => {
+      Promise.all( promises )
+      .then( res => {
+        resolve( res )
+      })  
     })
   }
 
-  this.getObjects = ( hashList, cb ) => {
-    // todo
-  }
-  
-  this.getObject = ( objectHash, cb ) => {
-    // todo
+  this.getObject = ( obj ) => {
+    return new Promise( (resolve, reject) => {
+      if(!obj) reject( 'No object provided' )
+      if ( obj.hasOwnProperty('value') && nonHashedTypes.indexOf( obj.type ) >= 0 ) 
+        return resolve( obj ) // just dump the object back out
+      else 
+        axios.get( self.restEndpoint + '/api/object', { params: { hash: obj.hash } } )
+          .then( response => {
+            return resolve( response.data )
+          })
+          .catch( err => {
+            reject( response.data )
+          })
+    })
   }
 
   this.getHistoryInstance = ( historyInstanceId ) => {
