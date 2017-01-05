@@ -25,7 +25,9 @@ var SpeckleReceiver = function( options ) {
     self.ws = new WebSocket( self.wsEndpoint + '/?access_token=' + self.token )
     self.ws.onerror = (err) => console.log('Error connecting.')
 
-    self.ws.on('ping', () => self.ws.send('alive') )
+    // depecrated, browser clients seem not capable of handling some basic stuff
+    // ping messages are now simply sent as "ping"
+    // self.ws.on('ping', () => self.ws.send('alive') )
     
     self.ws.on('open', () => {
       console.log('Connection opened.')
@@ -38,6 +40,8 @@ var SpeckleReceiver = function( options ) {
     })
   
     self.ws.on('message', (data, flags) => {
+      if( data === 'ping') return self.ws.send('alive')
+
       data = JSON.parse( data )
 
       switch( data.eventName ) {
