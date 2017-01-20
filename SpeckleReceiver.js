@@ -8,7 +8,6 @@ const nonHashedTypes       = [ '404', 'Number', 'Boolean', 'String', 'Point', 'V
 var SpeckleReceiver = function( options ) {
   var self = this
 
-  // they are coming from the options arg
   this.wsEndpoint = options.wsEndpoint
   this.restEndpoint = options.restEndpoint
   this.token = options.token
@@ -34,14 +33,16 @@ var SpeckleReceiver = function( options ) {
       self.reconnectAttempts = 0
       self.ws.send( JSON.stringify( {
         eventName: 'join-stream',
-        args: self.streamId
+        args: { streamid: self.streamId, role: 'receiver' }
       } ))
       self.emit('opened', null)
     })
   
     self.ws.on('message', (data, flags) => {
-      if( data === 'ping') return self.ws.send('alive')
-
+      if( data === 'ping') {
+        console.log( 'got a ping. sent an alive.' )
+        return self.ws.send('alive')
+      } 
       data = JSON.parse( data )
 
       switch( data.eventName ) {
@@ -80,7 +81,7 @@ var SpeckleReceiver = function( options ) {
   this.getStream = () => {
     axios.get( self.restEndpoint + '/api/stream', { headers : { 'speckle-token': self.token, 'speckle-stream-id': self.streamId, 'speckle-ws-id': self.wsSessionId }} )
       .then( response => {  
-        self.emit('first-data', response.data)
+        self.emit('ready', response.data)
       })
   }
 
@@ -109,12 +110,6 @@ var SpeckleReceiver = function( options ) {
           })
     })
   }
-
-  this.getHistoryInstance = ( historyInstanceId ) => {
-    // todo
-    console.log('Get history instance: TODO')
-  }
-
 
   // let's go! 
   this.connect()

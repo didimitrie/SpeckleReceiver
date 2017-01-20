@@ -4,8 +4,10 @@ var SpeckleReceiver = require('./SpeckleReceiver')
 var myReceiver = new SpeckleReceiver( {
   wsEndpoint: 'ws://10.211.55.2:8080', // replace with yours!
   restEndpoint: 'http://10.211.55.2:8080', // replace with yours! 
+  // wsEndpoint: 'wss://5th.one', // replace with yours!, remote testing
+  // restEndpoint: 'https://5th.one', // replace with yours!, remote testing
   token: 'asdf', // optional
-  streamId: 'S1FWZ2TQl'
+  streamId: 'rykdLqJve'
 } )
 
 myReceiver.on('opened', data => {
@@ -13,14 +15,14 @@ myReceiver.on('opened', data => {
   console.log('live connection opened.')
 })
 
-myReceiver.on('first-data', data => {
+myReceiver.on('ready', data => {
   // data.stream = various info about the stream
-  // data.stream.liveInstance.structure = the structure of the stream (ie layers and their names)
+  // data.stream.liveInstance.layers = the layers of the stream (ie layers and their names)
   // data.stream.liveInstance.objects = the hash list of all the objects contained in this stream
   // further updates (ie 'live-data') will contain just the liveInstance object
-  console.log('[first-data] Stream init data received. #Structure:', data.stream.liveInstance.structure.length, '#Objects:', data.stream.liveInstance.objects.length )
+  console.log('[ready] Stream init data received. #Structure:', data.layers.length, '#Objects:', data.objects.length, '#Name', data.name, '#History', data.history )
   // get all the objects from the server; no agressive caching is implemented
-  myReceiver.getObjects(data.stream.liveInstance.objects)
+  myReceiver.getObjects(data.objects)
   .then( objects => {
     // do something with the objects.
     console.log('[first-data] Received all objects as well now.')
@@ -28,17 +30,17 @@ myReceiver.on('first-data', data => {
 })
 
 myReceiver.on('live-update', data => {
-  // data.liveInstance.structure = structure
+  // data.liveInstance.layers = layers
   // data.liveInstance.objects = hash list
-  console.log('[live-update] Live update received. #Structure:', data.liveInstance.structure.length, '#Objects:', data.liveInstance.objects.length )
-  myReceiver.getObjects(data.liveInstance.objects)
+  console.log('[live-update] Live update received. #Structure:', data.layers.length, '#Objects:', data.objects.length )
+  myReceiver.getObjects(data.objects)
   .then( objects => {
     // do something with the objects
     console.log('[live-update] Received all objects as well now.')
   })
   
   // you can also get just a single object, if so inclined:
-  myReceiver.getObject( data.liveInstance.objects[0] )
+  myReceiver.getObject( data.objects[0] )
   .then( obj => {
     console.log('[live-update] Example object:')
     console.log(obj)
@@ -47,7 +49,7 @@ myReceiver.on('live-update', data => {
 
 myReceiver.on('metadata-update', data => {
   // do something
-  console.log('[metadata-update] Instance name:', data.streamName, '#Structures:', data.structure.length)
+  console.log('[metadata-update] Instance name:', data.name, '#Structures:', data.layers.length)
 })
 
 myReceiver.on('volatile-message', data => {
